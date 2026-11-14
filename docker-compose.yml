@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:15
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - db-network
+
+  api:
+    build: .
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - web-network
+      - db-network
+
+  web:
+    build: ./client
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - web-network
+
+volumes:
+  postgres_data:
+
+networks:
+  web-network:
+  db-network:
